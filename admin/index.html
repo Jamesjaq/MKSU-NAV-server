@@ -504,9 +504,9 @@ map.on('click',e=>{
     const n=nodes[id];if(!n)return;
     L.circleMarker([n.lat,n.lng],{radius:8,color:'#fff',weight:2,fillColor:'#ef5350',fillOpacity:1}).addTo(verifyLayer);
   });
-  const s=nodes[result.path[0]],e=nodes[result.path[result.path.length-1]];
-  L.circleMarker([s.lat,s.lng],{radius:10,color:'#fff',weight:3,fillColor:'#66bb6a',fillOpacity:1}).bindTooltip('Start').addTo(verifyLayer);
-  L.circleMarker([e.lat,e.lng],{radius:10,color:'#fff',weight:3,fillColor:'#ef5350',fillOpacity:1}).bindTooltip('Destination').addTo(verifyLayer);
+  const sNode=nodes[result.path[0]],eNode=nodes[result.path[result.path.length-1]];
+  L.circleMarker([sNode.lat,sNode.lng],{radius:10,color:'#fff',weight:3,fillColor:'#66bb6a',fillOpacity:1}).bindTooltip('Start').addTo(verifyLayer);
+  L.circleMarker([eNode.lat,eNode.lng],{radius:10,color:'#fff',weight:3,fillColor:'#ef5350',fillOpacity:1}).bindTooltip('Destination').addTo(verifyLayer);
   map.fitBounds(ll,{padding:[60,60]});
 
   document.getElementById('verifyDist').textContent=result.distance.toFixed(0);
