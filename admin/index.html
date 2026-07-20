@@ -3,161 +3,136 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>MKSU-NAV Admin</title>
+<title>MKSU Admin - Campus Map Editor</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100dvh}
-#map{width:100%;height:100dvh}
-.toolbar{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:1000;background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.2);display:flex;gap:4px;padding:4px;flex-wrap:wrap;justify-content:center}
-.toolbar button{padding:8px 16px;border:2px solid transparent;border-radius:8px;background:#f0f0f0;cursor:pointer;font-weight:600;font-size:13px;transition:all .15s;white-space:nowrap}
-.toolbar button:hover{background:#e0e0e0}
-.toolbar button.active{border-color:#1565C0;background:#e3f2fd;color:#1565C0}
-.toolbar button.danger{color:#d32f2f}
-.toolbar button.danger.active{border-color:#d32f2f;background:#ffebee;color:#d32f2f}
-.toolbar .sep{width:1px;background:#ddd;margin:4px}
-.panel{position:fixed;bottom:0;left:0;right:0;z-index:1000;background:#fff;border-radius:16px 16px 0 0;box-shadow:0 -2px 12px rgba(0,0,0,0.15);padding:12px 16px;max-height:45dvh;overflow-y:auto;transition:transform .3s}
-.panel.collapsed{transform:translateY(calc(100% - 50px))}
-.panel-handle{text-align:center;margin-bottom:8px;cursor:pointer;user-select:none;color:#999;font-size:20px;line-height:12px}
-.panel-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
-.panel label{font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.5px}
-.panel input,.panel select{padding:6px 10px;border:1px solid #ccc;border-radius:6px;font-size:14px;flex:1;min-width:100px}
-.panel button{padding:8px 20px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all .15s}
-.btn-primary{background:#1565C0;color:#fff}
-.btn-primary:hover{background:#0D47A1}
-.btn-success{background:#2e7d32;color:#fff}
-.btn-success:hover{background:#1b5e20}
-.btn-danger{background:#d32f2f;color:#fff}
-.btn-danger:hover{background:#b71c1c}
-.btn-secondary{background:#757575;color:#fff}
-.btn-warning{background:#e65100;color:#fff}
-.waypoint-list{display:flex;flex-direction:column;gap:2px;max-height:200px;overflow-y:auto;margin-top:8px}
-.waypoint-item{display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:4px;font-size:13px;cursor:pointer;transition:background .15s}
-.waypoint-item:hover{background:#f5f5f5}
-.waypoint-item .color-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
-.waypoint-item .name{flex:1}
-.waypoint-item .del-btn{color:#d32f2f;cursor:pointer;font-weight:bold;padding:2px 6px;border-radius:4px}
-.waypoint-item .del-btn:hover{background:#ffebee}
-.floor-selector{display:flex;gap:4px}
-.floor-selector button{padding:4px 12px;border:1px solid #ccc;border-radius:4px;background:#fff;cursor:pointer;font-size:13px}
-.floor-selector button.active{background:#1565C0;color:#fff;border-color:#1565C0}
-.status-bar{position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:1000;background:rgba(0,0,0,0.8);color:#fff;padding:6px 16px;border-radius:20px;font-size:13px;pointer-events:none;transition:opacity .3s;opacity:0}
-.status-bar.show{opacity:1}
+body{font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100dvh;background:#1a1a2e}
+#map{width:100%;height:100dvh;z-index:1}
+
+/* Top bar */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(26,26,46,0.92);backdrop-filter:blur(10px);padding:8px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.topbar h1{color:#fff;font-size:16px;font-weight:700;letter-spacing:0.5px;margin-right:auto}
+.topbar h1 span{color:#4fc3f7}
+.topbar button{background:rgba(255,255,255,0.1);border:none;color:#fff;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.topbar button:hover{background:rgba(255,255,255,0.2)}
+.topbar button.primary{background:#4fc3f7;color:#1a1a2e}
+.topbar button.primary:hover{background:#29b6f6}
+.topbar button.publish{background:#ef5350;color:#fff}
+.topbar button.publish:hover{background:#e53935}
+.topbar .badge{background:rgba(255,255,255,0.15);color:#aaa;padding:4px 10px;border-radius:12px;font-size:11px}
+
+/* Floating add button */
+.fab{position:fixed;bottom:24px;right:24px;z-index:999;width:56px;height:56px;border-radius:50%;background:#4fc3f7;color:#1a1a2e;border:none;font-size:28px;cursor:pointer;box-shadow:0 4px 16px rgba(79,195,247,0.4);transition:all .2s;display:flex;align-items:center;justify-content:center}
+.fab:hover{transform:scale(1.1)}
+.fab.active{background:#ef5350;transform:rotate(45deg);box-shadow:0 4px 16px rgba(239,83,80,0.4)}
+.fab-label{position:fixed;bottom:88px;right:24px;z-index:998;color:#fff;font-size:12px;font-weight:600;background:rgba(0,0,0,0.7);padding:4px 12px;border-radius:8px;pointer-events:none;transition:opacity .3s}
+
+/* Bottom panel */
+.panel{position:fixed;bottom:0;left:0;right:0;z-index:1000;background:rgba(26,26,46,0.95);backdrop-filter:blur(20px);border-radius:20px 20px 0 0;padding:16px 20px;max-height:50vh;overflow-y:auto;transition:transform .35s cubic-bezier(.4,0,.2,1);border-top:1px solid rgba(255,255,255,0.08);display:none}
+.panel.show{display:block}
+.panel .handle{text-align:center;margin-bottom:12px;cursor:grab;user-select:none}
+.panel .handle span{display:inline-block;width:40px;height:4px;background:rgba(255,255,255,0.2);border-radius:4px}
+.panel h2{color:#fff;font-size:16px;margin-bottom:12px}
+.panel h2 small{font-weight:400;color:#888;font-size:13px}
+.panel label{color:#aaa;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px}
+.panel input,.panel select{width:100%;padding:10px 14px;border:1px solid rgba(255,255,255,0.15);border-radius:10px;font-size:14px;background:rgba(255,255,255,0.06);color:#fff;outline:none;transition:border .2s;margin-bottom:10px}
+.panel input:focus,.panel select:focus{border-color:#4fc3f7}
+.panel select option{background:#1a1a2e;color:#fff}
+.panel .row{display:flex;gap:10px;margin-bottom:10px}
+.panel .row.half>*{flex:1}
+.panel .row.center{justify-content:center}
+.panel .btn{flex:1;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
+.panel .btn-primary{background:#4fc3f7;color:#1a1a2e}
+.panel .btn-primary:hover{background:#29b6f6}
+.panel .btn-success{background:#66bb6a;color:#fff}
+.panel .btn-success:hover{background:#43a047}
+.panel .btn-danger{background:#ef5350;color:#fff}
+.panel .btn-danger:hover{background:#e53935}
+.panel .btn-ghost{background:rgba(255,255,255,0.08);color:#aaa}
+.panel .btn-ghost:hover{background:rgba(255,255,255,0.15);color:#fff}
+.panel .btn-sm{padding:8px 16px;flex:none}
+
+/* Floor selector */
+.floor-group{display:flex;gap:6px;margin-bottom:12px}
+.floor-btn{padding:8px 16px;border:1px solid rgba(255,255,255,0.15);border-radius:8px;background:rgba(255,255,255,0.05);color:#aaa;cursor:pointer;font-size:13px;font-weight:600;transition:all .2s}
+.floor-btn.active{background:#4fc3f7;color:#1a1a2e;border-color:#4fc3f7}
+.floor-btn:hover:not(.active){background:rgba(255,255,255,0.1);color:#fff}
+
+/* Waypoint list */
+.wp-list{margin-top:4px}
+.wp-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:background .15s;border-bottom:1px solid rgba(255,255,255,0.04)}
+.wp-item:last-child{border-bottom:none}
+.wp-item:hover{background:rgba(255,255,255,0.06)}
+.wp-item .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.wp-item .name{flex:1;color:#ddd;font-size:13px}
+.wp-item .meta{color:#666;font-size:11px}
+.wp-item .del{color:#666;cursor:pointer;padding:4px;border-radius:4px;font-size:14px;line-height:1}
+.wp-item .del:hover{color:#ef5350;background:rgba(239,83,80,0.15)}
+
+/* Status toast */
+.toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);z-index:2000;background:rgba(0,0,0,0.85);color:#fff;padding:8px 20px;border-radius:12px;font-size:13px;pointer-events:none;transition:all .3s;opacity:0}
+.toast.show{opacity:1}
+
+/* Legend */
+.legend{position:fixed;bottom:90px;left:16px;z-index:500;background:rgba(26,26,46,0.85);backdrop-filter:blur(10px);padding:10px 14px;border-radius:10px;font-size:11px;color:#aaa;border:1px solid rgba(255,255,255,0.08)}
+.legend span{display:inline-flex;align-items:center;gap:6px;margin-right:12px}
+.legend .dot{display:inline-block;width:10px;height:10px;border-radius:50%}
+.legend .line{display:inline-block;width:20px;height:3px;border-radius:2px;vertical-align:middle}
+
 @media(min-width:768px){
-  .panel{left:auto;right:10px;bottom:10px;width:380px;max-height:80dvh;border-radius:12px}
-  .toolbar{top:10px;left:10px;transform:none}
-  .status-bar{top:10px;left:auto;right:420px;transform:none}
+  .panel{left:auto;right:16px;bottom:16px;width:380px;max-height:80vh;border-radius:16px}
+  .topbar{padding:10px 24px}
 }
 </style>
 </head>
 <body>
 <div id="map"></div>
 
-<div class="toolbar" id="toolbar">
-  <button data-mode="view" class="active">View</button>
-  <button data-mode="place">Place</button>
-  <button data-mode="connect">Connect</button>
-  <button data-mode="verify">Verify</button>
-  <div class="sep"></div>
-  <button data-mode="publish" class="danger">Publish</button>
+<div class="topbar">
+  <h1>MKSU<span>NAV</span> Admin</h1>
+  <span class="badge" id="wpCount">0 waypoints</span>
+  <span class="badge" id="edgeCount">0 edges</span>
+  <button class="primary" id="btnLocate">📍</button>
+  <button id="btnSave">💾 Download</button>
+  <button class="publish" id="btnPublish">☁️ Publish</button>
 </div>
 
-<div class="status-bar" id="status"></div>
+<button class="fab" id="btnAdd">+</button>
+<div class="fab-label" id="fabLabel">Add waypoint</div>
 
-<div class="panel" id="panel">
-  <div class="panel-handle" id="panelHandle">―</div>
+<div class="legend">
+  <span><span class="dot" style="background:#4fc3f7"></span> Waypoint</span>
+  <span><span class="dot" style="background:#ffa726"></span> POI</span>
+  <span><span class="line" style="background:#66bb6a"></span> Path</span>
+  <span><span class="line" style="background:#ef5350"></span> Selected</span>
+</div>
 
-  <div id="panelPlace" style="display:none">
-    <div class="panel-row">
-      <label>Name</label>
-      <input id="wpName" placeholder="e.g. Library Entrance" />
-    </div>
-    <div class="panel-row">
-      <label>Type</label>
-      <select id="wpType">
-        <option value="junction">Junction</option>
-        <option value="entrance">Entrance</option>
-        <option value="classroom">Classroom</option>
-        <option value="office">Office</option>
-        <option value="lab">Lab</option>
-        <option value="cafeteria">Cafeteria</option>
-        <option value="library">Library</option>
-        <option value="service">Service</option>
-        <option value="hostel">Hostel</option>
-        <option value="gate">Gate</option>
-      </select>
-    </div>
-    <div class="panel-row">
-      <label>Floor</label>
-      <div class="floor-selector" id="placeFloor">
-        <button data-floor="0" class="active">G</button>
-        <button data-floor="1">1</button>
-        <button data-floor="2">2</button>
-        <button data-floor="3">3</button>
-      </div>
-    </div>
-    <div class="panel-row">
-      <label>Lat</label><input id="wpLat" readonly />
-      <label>Lng</label><input id="wpLng" readonly />
-    </div>
-    <div class="panel-row">
-      <button class="btn-success" id="btnSaveWp">Save Waypoint</button>
-    </div>
-    <div style="font-size:12px;color:#666;margin-top:4px">Tap on the map to place. Duplicate check: 15m radius.</div>
+<div class="toast" id="toast"></div>
+
+<!-- Main Panel: waypoint list -->
+<div class="panel" id="panelList">
+  <div class="handle"><span></span></div>
+  <h2>Waypoints <small id="panelListFloor">Ground</small></h2>
+  <div class="floor-group" id="floorFilter">
+    <button class="floor-btn active" data-f="0">Ground</button>
+    <button class="floor-btn" data-f="1">Floor 1</button>
+    <button class="floor-btn" data-f="2">Floor 2</button>
+    <button class="floor-btn" data-f="3">Floor 3</button>
+    <button class="floor-btn" data-f="-1">All</button>
   </div>
+  <div class="wp-list" id="wpList"></div>
+</div>
 
-  <div id="panelConnect" style="display:none">
-    <div style="font-size:14px;margin-bottom:8px">
-      <span id="connStatus">Tap the first waypoint</span>
-    </div>
-    <div class="panel-row">
-      <button class="btn-secondary" id="btnCancelConn">Cancel</button>
-    </div>
-  </div>
-
-  <div id="panelVerify" style="display:none">
-    <div style="font-size:14px;margin-bottom:8px">
-      <span id="verifyStatus">Tap START waypoint</span>
-    </div>
-    <div id="verifyResult" style="display:none;margin-top:8px;padding:8px;background:#e8f5e9;border-radius:6px;font-size:14px">
-      <strong>Path found!</strong><br/>
-      Distance: <span id="verifyDist"></span>m<br/>
-      Steps: <span id="verifySteps"></span>
-    </div>
-    <div class="panel-row">
-      <button class="btn-secondary" id="btnCancelVerify">Cancel</button>
-    </div>
-  </div>
-
-  <div id="panelView" style="display:block">
-    <div class="panel-row">
-      <label>Floor</label>
-      <div class="floor-selector" id="viewFloor">
-        <button data-floor="0" class="active">G</button>
-        <button data-floor="1">1</button>
-        <button data-floor="2">2</button>
-        <button data-floor="3">3</button>
-        <button data-floor="-1">All</button>
-      </div>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:13px;color:#666;margin-bottom:4px">
-      <span><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#1565C0;vertical-align:middle"></span> Waypoint</span>
-      <span><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#e65100;vertical-align:middle"></span> POI</span>
-      <span style="color:#4caf50">━━━ Path</span>
-      <span style="color:#d32f2f">━ Verified</span>
-    </div>
-    <div class="waypoint-list" id="wpList"></div>
-    <div class="panel-row" style="margin-top:8px">
-      <button class="btn-primary" id="btnLocateMe">📍 Locate Me</button>
-      <button class="btn-secondary" id="btnDownloadJson">Download JSON</button>
-    </div>
-  </div>
-
-  <div id="panelEdit" style="display:none">
-    <div class="panel-row"><label>ID</label><input id="editId" readonly/></div>
-    <div class="panel-row"><label>Name</label><input id="editName"/></div>
-    <div class="panel-row"><label>Type</label><select id="editType">
+<!-- Edit Panel -->
+<div class="panel" id="panelEdit" style="display:none">
+  <div class="handle"><span></span></div>
+  <h2 id="editTitle">Edit Waypoint</h2>
+  <label>Name</label>
+  <input id="editName" placeholder="e.g. Library Entrance" />
+  <div class="row half">
+    <div><label>Type</label><select id="editType">
       <option value="junction">Junction</option>
       <option value="entrance">Entrance</option>
       <option value="classroom">Classroom</option>
@@ -169,605 +144,523 @@ body{font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100dvh}
       <option value="hostel">Hostel</option>
       <option value="gate">Gate</option>
     </select></div>
-    <div class="panel-row"><label>Floor</label>
-      <div class="floor-selector" id="editFloor">
-        <button data-floor="0">G</button><button data-floor="1">1</button>
-        <button data-floor="2">2</button><button data-floor="3">3</button>
-      </div>
-    </div>
-    <div class="panel-row"><label>Lat</label><input id="editLat"/><label>Lng</label><input id="editLng"/></div>
-    <div class="panel-row" style="display:flex;gap:8px">
-      <button class="btn-primary" id="btnSaveEdit">Save</button>
-      <button class="btn-danger" id="btnDeleteWp">Delete</button>
-      <button class="btn-secondary" id="btnCancelEdit">Cancel</button>
-    </div>
+    <div><label>Floor</label><div class="floor-group" id="editFloor" style="margin-bottom:0">
+      <button class="floor-btn" data-f="0">G</button>
+      <button class="floor-btn" data-f="1">1</button>
+      <button class="floor-btn" data-f="2">2</button>
+      <button class="floor-btn" data-f="3">3</button>
+    </div></div>
+  </div>
+  <div class="row half">
+    <div><label>Lat</label><input id="editLat" /></div>
+    <div><label>Lng</label><input id="editLng" /></div>
+  </div>
+  <div style="display:flex;gap:8px">
+    <button class="btn btn-ghost btn-sm" id="btnVerifyPath">🔍 Test A*</button>
+    <button class="btn btn-ghost btn-sm" id="btnConnectMode">🔗 Connect</button>
+    <button class="btn btn-danger btn-sm" id="btnDeleteWp" style="margin-left:auto">Delete</button>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <button class="btn btn-ghost" id="btnEditCancel">Cancel</button>
+    <button class="btn btn-primary" id="btnEditSave">Save</button>
   </div>
 </div>
 
-<script>
-const DATA_PATH = 'data.json';
-const REPO = 'Jamesjaq/MKSU-NAV-server';
-let GITHUB_TOKEN = localStorage.getItem('github_token') || '';
+<!-- Connect Panel -->
+<div class="panel" id="panelConnect" style="display:none">
+  <div class="handle"><span></span></div>
+  <h2 id="connTitle">🔗 Connect Waypoints</h2>
+  <p style="color:#aaa;font-size:14px;margin-bottom:12px" id="connStatus">Tap the first waypoint on the map.</p>
+  <button class="btn btn-ghost" id="btnConnCancel" style="width:100%">Cancel</button>
+</div>
 
-// ---- State ----
+<!-- Verify Panel -->
+<div class="panel" id="panelVerify" style="display:none">
+  <div class="handle"><span></span></div>
+  <h2 id="verifyTitle">🔍 Verify Path</h2>
+  <p style="color:#aaa;font-size:14px;margin-bottom:8px" id="verifyStatus">Tap START on the map.</p>
+  <div id="verifyResult" style="display:none;padding:12px;background:rgba(102,187,106,0.15);border-radius:10px;margin-bottom:10px">
+    <div style="color:#66bb6a;font-size:15px;font-weight:600">✓ Path found!</div>
+    <div style="color:#aaa;font-size:13px;margin-top:4px">Distance: <strong style="color:#fff" id="verifyDist"></strong>m · <strong style="color:#fff" id="verifySteps"></strong> waypoints</div>
+  </div>
+  <button class="btn btn-ghost" id="btnVerifyCancel" style="width:100%">Done</button>
+</div>
+
+<script>
+const REPO = 'Jamesjaq/MKSU-NAV-server';
+const DATA_PATH = 'data.json';
+let TOKEN = localStorage.getItem('gh_token') || '';
+
 let data = null;
-let map, markersLayer, edgesLayer, verifyLayer, tempMarker;
-let mode = 'view';
-let selectedFloor = 0;
-let placeFloor = 0;
-let isPanelCollapsed = false;
-let connectFirst = null;
-let verifyFirst = null;
-let editingWp = null;
-let wpIdCounter = 100;
-let gpsMarker = null;
+let map, buildingsLayer, edgesLayer, markersLayer, verifyLayer;
+let filterFloor = 0;
+let addingMode = false;
+let connectFrom = null;
+let verifyFrom = null;
+let selectedWp = null;
 
 // ---- Init Map ----
-map = L.map('map', { zoomControl: true }).setView([-1.5167, 37.2673], 16);
+map = L.map('map', { zoomControl: false }).setView([-1.5167, 37.2673], 17);
+L.control.zoom({ position: 'bottomright' }).addTo(map);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; OpenStreetMap',
-  maxZoom: 19
+  maxZoom: 19, attribution: '&copy; OpenStreetMap'
 }).addTo(map);
 
-markersLayer = L.layerGroup().addTo(map);
+buildingsLayer = L.layerGroup().addTo(map);
 edgesLayer = L.layerGroup().addTo(map);
+markersLayer = L.layerGroup().addTo(map);
 verifyLayer = L.layerGroup().addTo(map);
 
 // ---- Helpers ----
-function haversine(lat1, lng1, lat2, lng2) {
-  const R = 6371000;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLng = (lng2 - lng1) * Math.PI / 180;
-  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLng/2)**2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
+function dist(lat1,lng1,lat2,lng2){const R=6371000;const dL=(lat2-lat1)*Math.PI/180;const dM=(lng2-lng1)*Math.PI/180;const a=Math.sin(dL/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dM/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
+function bearing(l1, m1, l2, m2){const d=(m2-m1)*Math.PI/180;const y=Math.sin(d)*Math.cos(l2*Math.PI/180);const x=Math.cos(l1*Math.PI/180)*Math.sin(l2*Math.PI/180)-Math.sin(l1*Math.PI/180)*Math.cos(l2*Math.PI/180)*Math.cos(d);return(Math.atan2(y,x)*180/Math.PI+360)%360}
+function bearDiff(a,b){const d=Math.abs(a-b);return Math.min(d,360-d)}
 
-function bearing(lat1, lng1, lat2, lng2) {
-  const dLng = (lng2 - lng1) * Math.PI / 180;
-  const y = Math.sin(dLng) * Math.cos(lat2 * Math.PI / 180);
-  const x = Math.cos(lat1 * Math.PI / 180) * Math.sin(lat2 * Math.PI / 180) -
-            Math.sin(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.cos(dLng);
-  return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
-}
-
-function bearingDiff(b1, b2) {
-  const d = Math.abs(b1 - b2);
-  return Math.min(d, 360 - d);
-}
-
-function showStatus(msg, duration = 3000) {
-  const el = document.getElementById('status');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(el._timer);
-  el._timer = setTimeout(() => el.classList.remove('show'), duration);
+function toast(msg, dur=3000){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),dur);
 }
 
 // ---- Load Data ----
-async function loadData() {
-  try {
-    const r = await fetch(`https://raw.githubusercontent.com/${REPO}/main/${DATA_PATH}?_=${Date.now()}`);
-    data = await r.json();
-    wpIdCounter = Math.max(...data.pathGraph.waypoints.map(w => w.id), 99) + 1;
-    render();
-    showStatus('Data loaded from GitHub');
-  } catch(e) {
-    showStatus('Could not load data. Loading defaults.', 5000);
-    data = {
-      version: 1, updatedAt: new Date().toISOString(),
-      campus: { name: 'Machakos University', shortName: 'MKSU', centerLat: -1.5167, centerLng: 37.2673 },
-      buildings: [], pois: [], qrMarkers: [], pathGraph: { waypoints: [], edges: [] }
-    };
-    render();
+async function loadData(){
+  try{
+    const r=await fetch(`https://raw.githubusercontent.com/${REPO}/main/${DATA_PATH}?_=${Date.now()}`);
+    data=await r.json();renderAll();toast('Loaded campus data');
+  }catch(e){
+    toast('Could not load data. Using defaults.',5000);
+    data={version:1,updatedAt:new Date().toISOString(),campus:{name:'Machakos University',shortName:'MKSU',centerLat:-1.5167,centerLng:37.2673},buildings:[],pois:[],qrMarkers:[],pathGraph:{waypoints:[],edges:[]}};
+    renderAll();
   }
 }
 
 // ---- A* ----
-function astar(fromId, toId) {
-  const adj = {};
-  const nodes = {};
-  data.pathGraph.waypoints.forEach(w => nodes[w.id] = w);
-  data.pathGraph.edges.forEach(e => {
-    if (!adj[e.from]) adj[e.from] = [];
-    if (!adj[e.to]) adj[e.to] = [];
-    adj[e.from].push({ to: e.to, w: e.weight });
-    adj[e.to].push({ to: e.from, w: e.weight });
+function astar(fid,tid){
+  const adj={},nodes={};
+  data.pathGraph.waypoints.forEach(w=>nodes[w.id]=w);
+  data.pathGraph.edges.forEach(e=>{
+    if(!adj[e.from])adj[e.from]=[];if(!adj[e.to])adj[e.to]=[];
+    adj[e.from].push({t:e.to,w:e.weight});adj[e.to].push({t:e.from,w:e.weight});
   });
-  if (!nodes[fromId] || !nodes[toId]) return null;
-
-  const open = new Set([fromId]);
-  const cameFrom = {};
-  const gScore = {}; gScore[fromId] = 0;
-  const fScore = {}; fScore[fromId] = haversine(nodes[fromId].lat, nodes[fromId].lng, nodes[toId].lat, nodes[toId].lng);
-
-  while (open.size) {
-    let current = null, bestF = Infinity;
-    for (const id of open) {
-      if ((fScore[id] ?? Infinity) < bestF) { bestF = fScore[id]; current = id; }
-    }
-    if (current === toId) {
-      const path = [current];
-      while (cameFrom[current] !== undefined) { current = cameFrom[current]; path.unshift(current); }
-      let dist = 0;
-      for (let i = 0; i < path.length - 1; i++) {
-        dist += haversine(nodes[path[i]].lat, nodes[path[i]].lng, nodes[path[i+1]].lat, nodes[path[i+1]].lng);
-      }
-      return { path, distance: dist };
-    }
-    open.delete(current);
-    (adj[current] || []).forEach(({ to, w }) => {
-      const tent = (gScore[current] ?? Infinity) + w;
-      if (tent < (gScore[to] ?? Infinity)) {
-        cameFrom[to] = current;
-        gScore[to] = tent;
-        fScore[to] = tent + haversine(nodes[to].lat, nodes[to].lng, nodes[toId].lat, nodes[toId].lng);
-        open.add(to);
-      }
-    });
+  if(!nodes[fid]||!nodes[tid])return null;
+  const o=new Set([fid]),cf={},gs={};gs[fid]=0;const fs={};fs[fid]=dist(nodes[fid].lat,nodes[fid].lng,nodes[tid].lat,nodes[tid].lng);
+  while(o.size){
+    let c=null,bf=Infinity;
+    for(const id of o){if((fs[id]??Infinity)<bf){bf=fs[id];c=id;}}
+    if(c===tid){const p=[c];while(cf[c]!==undefined){c=cf[c];p.unshift(c)}let d=0;for(let i=0;i<p.length-1;i++)d+=dist(nodes[p[i]].lat,nodes[p[i]].lng,nodes[p[i+1]].lat,nodes[p[i+1]].lng);return{path:p,distance:d}}
+    o.delete(c);(adj[c]||[]).forEach(({t,w})=>{const tn=(gs[c]??Infinity)+w;if(tn<(gs[t]??Infinity)){cf[t]=c;gs[t]=tn;fs[t]=tn+dist(nodes[t].lat,nodes[t].lng,nodes[tid].lat,nodes[tid].lng);o.add(t)}});
   }
   return null;
 }
 
-function findTurnIndices(pathIds) {
-  const nodes = {};
-  data.pathGraph.waypoints.forEach(w => nodes[w.id] = w);
-  if (pathIds.length < 3) return pathIds;
-  const turns = [pathIds[0]];
-  for (let i = 1; i < pathIds.length - 1; i++) {
-    const a = nodes[pathIds[i-1]], b = nodes[pathIds[i]], c = nodes[pathIds[i+1]];
-    if (!a || !b || !c) continue;
-    const b1 = bearing(a.lat, a.lng, b.lat, b.lng);
-    const b2 = bearing(b.lat, b.lng, c.lat, c.lng);
-    if (bearingDiff(b1, b2) > 15) turns.push(pathIds[i]);
+function findTurns(ids){
+  const n={};data.pathGraph.waypoints.forEach(w=>n[w.id]=w);
+  if(ids.length<3)return ids;
+  const t=[ids[0]];
+  for(let i=1;i<ids.length-1;i++){
+    const a=n[ids[i-1]],b=n[ids[i]],c=n[ids[i+1]];
+    if(!a||!b||!c)continue;
+    if(bearDiff(bearing(a.lat,a.lng,b.lat,b.lng),bearing(b.lat,b.lng,c.lat,c.lng))>15)t.push(ids[i]);
   }
-  turns.push(pathIds[pathIds.length - 1]);
-  return turns;
+  t.push(ids[ids.length-1]);return t;
 }
 
 // ---- Render ----
-function render() {
-  markersLayer.clearLayers();
-  edgesLayer.clearLayers();
-  verifyLayer.clearLayers();
-  if (!data) return;
+let nextWpId = 100;
 
-  const showAll = selectedFloor === -1;
-  const floorWps = data.pathGraph.waypoints.filter(w => showAll || w.floor === selectedFloor);
-  const wpsById = {};
-  data.pathGraph.waypoints.forEach(w => wpsById[w.id] = w);
+function renderAll(){
+  buildingsLayer.clearLayers();edgesLayer.clearLayers();markersLayer.clearLayers();verifyLayer.clearLayers();
+  if(!data)return;
+
+  nextWpId = Math.max(...data.pathGraph.waypoints.map(w=>w.id),99)+1;
+
+  // Buildings
+  const wps={};data.pathGraph.waypoints.forEach(w=>wps[w.id]=w);
+  data.buildings.forEach(b=>{
+    if(!b.outline||b.outline.length<3)return;
+    L.polygon(b.outline.map(p=>[p.lat,p.lng]),{
+      color:'rgba(79,195,247,0.6)',weight:2,fillColor:'rgba(79,195,247,0.1)',fillOpacity:0.3
+    }).bindTooltip(b.name,{permanent:false,direction:'center'}).addTo(buildingsLayer);
+    // Building label
+    L.marker([b.lat,b.lng],{
+      icon:L.divIcon({className:'',html:`<div style="background:rgba(79,195,247,0.2);backdrop-filter:blur(4px);color:#4fc3f7;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600;white-space:nowrap;border:1px solid rgba(79,195,247,0.3)">${b.abbreviation||b.name}</div>`,iconSize:[0,0],iconAnchor:[0,0]})
+    }).addTo(buildingsLayer);
+  });
 
   // Edges
-  data.pathGraph.edges.forEach(e => {
-    const a = wpsById[e.from], b = wpsById[e.to];
-    if (!a || !b) return;
-    const aVisible = showAll || a.floor === selectedFloor;
-    const bVisible = showAll || b.floor === selectedFloor;
-    if (!aVisible && !bVisible) return;
-    const color = aVisible && bVisible ? '#4caf50' : '#bdbdbd';
-    L.polyline([[a.lat, a.lng], [b.lat, b.lng]], {
-      color, weight: 3, opacity: 0.7
-    }).bindTooltip(`${e.weight}m`).addTo(edgesLayer);
+  const showAll=filterFloor===-1;
+  data.pathGraph.edges.forEach(e=>{
+    const a=wps[e.from],b=wps[e.to];
+    if(!a||!b)return;
+    const aV=showAll||a.floor===filterFloor,bV=showAll||b.floor===filterFloor;
+    if(!aV&&!bV)return;
+    const c=aV&&bV?'#66bb6a':'rgba(255,255,255,0.1)';
+    L.polyline([[a.lat,a.lng],[b.lat,b.lng]],{color:c,weight:2,opacity:0.6})
+      .bindTooltip(`${e.weight}m`,{permanent:false})
+      .addTo(edgesLayer);
   });
 
   // Waypoints
-  floorWps.forEach(w => {
-    const isPoi = data.pois.some(p => Math.abs(p.lat - w.lat) < 0.00005 && Math.abs(p.lng - w.lng) < 0.00005);
-    const isQr = data.qrMarkers.some(q => Math.abs(q.lat - w.lat) < 0.00005 && Math.abs(q.lng - w.lng) < 0.00005);
-    const color = isPoi ? '#e65100' : isQr ? '#7b1fa2' : '#1565C0';
-    const radius = isPoi ? 7 : 6;
-    const m = L.circleMarker([w.lat, w.lng], {
-      radius, color: '#fff', weight: 2, fillColor: color, fillOpacity: 0.9
-    }).bindTooltip(`#${w.id} (f${w.floor})`, { direction: 'top' });
-    m._wpId = w.id;
-    m.on('click', () => onWpClick(w.id));
+  const fWps=data.pathGraph.waypoints.filter(w=>showAll||w.floor===filterFloor);
+  fWps.forEach(w=>{
+    const poi=data.pois.find(p=>Math.abs(p.lat-w.lat)<5e-5&&Math.abs(p.lng-w.lng)<5e-5);
+    const isOnFloor=showAll||w.floor===filterFloor;
+    const color=poi?'#ffa726':'#4fc3f7';
+    const r=poi?8:6;
+    const m=L.circleMarker([w.lat,w.lng],{
+      radius:r,color:'#fff',weight:2,fillColor:color,fillOpacity:isOnFloor?0.9:0.3
+    });
+    const name=poi?poi.name:`WP #${w.id}`;
+    m.bindTooltip(`<b>${name}</b><br/>#${w.id} · f${w.floor}`,{direction:'top'});
+    m._wpId=w.id;
+    m.on('click',()=>selectWaypoint(w.id));
     markersLayer.addLayer(m);
   });
 
-  // POIs (extra markers for those not near waypoints)
-  data.pois.forEach(p => {
-    const near = data.pathGraph.waypoints.some(w =>
-      Math.abs(w.lat - p.lat) < 0.00005 && Math.abs(w.lng - p.lng) < 0.00005 && w.floor === p.floor
-    );
-    if (near) return;
-    if (!showAll && p.floor !== selectedFloor) return;
-    L.circleMarker([p.lat, p.lng], {
-      radius: 8, color: '#fff', weight: 2, fillColor: '#e65100', fillOpacity: 0.9
-    }).bindTooltip(p.name).addTo(markersLayer);
-  });
-
-  updateWpList();
+  updateCounts();
+  updateList();
 }
 
-function updateWpList() {
-  const el = document.getElementById('wpList');
-  if (!data) { el.innerHTML = ''; return; }
-  const showAll = selectedFloor === -1;
-  const items = data.pathGraph.waypoints
-    .filter(w => showAll || w.floor === selectedFloor)
-    .map(w => {
-      const poi = data.pois.find(p => Math.abs(p.lat - w.lat) < 0.00005 && Math.abs(p.lng - w.lng) < 0.00005);
-      const edgeCount = data.pathGraph.edges.filter(e => e.from === w.id || e.to === w.id).length;
-      const name = poi ? poi.name : `Waypoint #${w.id}`;
-      return `<div class="waypoint-item" data-id="${w.id}">
-        <span class="color-dot" style="background:${poi ? '#e65100' : '#1565C0'}"></span>
+function updateCounts(){
+  document.getElementById('wpCount').textContent=`${data.pathGraph.waypoints.length} waypoints`;
+  document.getElementById('edgeCount').textContent=`${data.pathGraph.edges.length} edges`;
+}
+
+function updateList(){
+  const el=document.getElementById('wpList');
+  const showAll=filterFloor===-1;
+  const items=data.pathGraph.waypoints
+    .filter(w=>showAll||w.floor===filterFloor)
+    .map(w=>{
+      const poi=data.pois.find(p=>Math.abs(p.lat-w.lat)<5e-5&&Math.abs(p.lng-w.lng)<5e-5);
+      const ec=data.pathGraph.edges.filter(e=>e.from===w.id||e.to===w.id).length;
+      const name=poi?poi.name:`Waypoint #${w.id}`;
+      return `<div class="wp-item" data-id="${w.id}">
+        <span class="dot" style="background:${poi?'#ffa726':'#4fc3f7'}"></span>
         <span class="name">${name}</span>
-        <span style="color:#999;font-size:11px">${edgeCount} edges</span>
-        <span class="del-btn" data-del="${w.id}">✕</span>
+        <span class="meta">${ec} edges · f${w.floor}</span>
+        <span class="del" data-del="${w.id}">✕</span>
       </div>`;
     }).join('');
-  el.innerHTML = items;
-  el.querySelectorAll('.waypoint-item').forEach(el => {
-    el.addEventListener('click', e => {
-      if (e.target.classList.contains('del-btn')) return;
-      const id = parseInt(el.dataset.id);
-      onWpClick(id);
+  el.innerHTML=items;
+  el.querySelectorAll('.wp-item').forEach(e=>{
+    e.addEventListener('click',ev=>{
+      if(ev.target.classList.contains('del'))return;
+      const id=parseInt(e.dataset.id);
+      selectWaypoint(id);
+      document.getElementById('panelList').classList.remove('show');
     });
   });
-  el.querySelectorAll('.del-btn').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      const id = parseInt(btn.dataset.del);
-      if (confirm(`Delete waypoint #${id} and its edges?`)) deleteWp(id);
+  el.querySelectorAll('.del').forEach(b=>{
+    b.addEventListener('click',ev=>{
+      ev.stopPropagation();
+      const id=parseInt(b.dataset.del);
+      if(confirm(`Delete waypoint #${id}?`))deleteWp(id);
     });
   });
 }
 
-function onWpClick(id) {
-  if (mode === 'connect') {
-    if (connectFirst === null) {
-      connectFirst = id;
-      document.getElementById('connStatus').textContent = `First: #${id}. Tap second waypoint.`;
-      document.getElementById('connStatus').style.color = '#e65100';
-    } else if (connectFirst !== id) {
-      addEdge(connectFirst, id);
-      connectFirst = null;
-      document.getElementById('connStatus').textContent = 'Edge created! Tap first waypoint again.';
-      document.getElementById('connStatus').style.color = '#2e7d32';
+// ---- Select Waypoint ----
+function selectWaypoint(id){
+  const w=data.pathGraph.waypoints.find(w=>w.id===id);
+  if(!w)return;
+  selectedWp=id;
+
+  // Highlight on map
+  markersLayer.eachLayer(m=>{
+    if(m._wpId===id){
+      m.setStyle({radius:12,color:'#ef5350',weight:3});
+    }else{
+      const poi=data.pois.find(p=>Math.abs(p.lat-m.getLatLng().lat)<5e-5&&Math.abs(p.lng-m.getLatLng().lng)<5e-5);
+      m.setStyle({radius:poi?8:6,color:'#fff',weight:2});
     }
-    return;
-  }
-
-  if (mode === 'verify') {
-    if (verifyFirst === null) {
-      verifyFirst = id;
-      document.getElementById('verifyStatus').textContent = `Start: #${id}. Tap destination.`;
-    } else {
-      doVerify(verifyFirst, id);
-      verifyFirst = null;
-    }
-    return;
-  }
-
-  if (mode === 'view' || mode === 'place') {
-    openEditPanel(id);
-  }
-}
-
-function openEditPanel(id) {
-  const w = data.pathGraph.waypoints.find(w => w.id === id);
-  if (!w) return;
-  const poi = data.pois.find(p => Math.abs(p.lat - w.lat) < 0.00005 && Math.abs(p.lng - w.lng) < 0.00005);
-  editingWp = id;
-  document.getElementById('editId').value = id;
-  document.getElementById('editName').value = poi ? poi.name : '';
-  document.getElementById('editType').value = poi ? poi.type : 'junction';
-  document.getElementById('editLat').value = w.lat.toFixed(6);
-  document.getElementById('editLng').value = w.lng.toFixed(6);
-  document.querySelectorAll('#editFloor button').forEach(b => {
-    b.classList.toggle('active', parseInt(b.dataset.floor) === w.floor);
   });
-  switchPanel('edit');
+
+  // Open edit panel
+  const poi=data.pois.find(p=>Math.abs(p.lat-w.lat)<5e-5&&Math.abs(p.lng-w.lng)<5e-5);
+  document.getElementById('editTitle').textContent=`Edit #${w.id}`;
+  document.getElementById('editName').value=poi?poi.name:'';
+  document.getElementById('editType').value=poi?poi.type:'junction';
+  document.getElementById('editLat').value=w.lat.toFixed(6);
+  document.getElementById('editLng').value=w.lng.toFixed(6);
+  document.querySelectorAll('#editFloor .floor-btn').forEach(b=>b.classList.toggle('active',parseInt(b.dataset.f)===w.floor));
+  showPanel('panelEdit');
 }
 
 // ---- Delete ----
-function deleteWp(id) {
-  data.pathGraph.edges = data.pathGraph.edges.filter(e => e.from !== id && e.to !== id);
-  data.pathGraph.waypoints = data.pathGraph.waypoints.filter(w => w.id !== id);
-  showStatus(`Deleted waypoint #${id}`);
-  render();
+function deleteWp(id){
+  data.pathGraph.edges=data.pathGraph.edges.filter(e=>e.from!==id&&e.to!==id);
+  data.pathGraph.waypoints=data.pathGraph.waypoints.filter(w=>w.id!==id);
+  data.pois=data.pois.filter(p=>{
+    const w=data.pathGraph.waypoints.find(w=>Math.abs(w.lat-p.lat)<5e-5&&Math.abs(w.lng-p.lng)<5e-5);
+    return w!==undefined;
+  });
+  selectedWp=null;
+  toast(`Deleted #${id}`);
+  renderAll();
 }
 
-// ---- Add Edge ----
-function addEdge(from, to) {
-  const a = data.pathGraph.waypoints.find(w => w.id === from);
-  const b = data.pathGraph.waypoints.find(w => w.id === to);
-  if (!a || !b) return showStatus('Waypoint not found', 3000);
-  const exists = data.pathGraph.edges.some(e =>
-    (e.from === from && e.to === to) || (e.from === to && e.to === from)
-  );
-  if (exists) return showStatus('Edge already exists', 3000);
-  const weight = Math.round(haversine(a.lat, a.lng, b.lat, b.lng));
-  data.pathGraph.edges.push({ from, to, weight });
-  showStatus(`Edge #${from} ↔ #${to} (${weight}m)`);
-  render();
+// ---- Add Waypoint ----
+function enterAddMode(){
+  addingMode=!addingMode;
+  document.getElementById('btnAdd').classList.toggle('active',addingMode);
+  document.getElementById('fabLabel').textContent=addingMode?'Tap map to place':'Add waypoint';
+  if(addingMode)toast('Tap anywhere on the map to place a waypoint');
 }
+
+map.on('click',e=>{
+  if(!addingMode)return;
+  const{lat,lng}=e.latlng;
+  // Duplicate check
+  const dup=data.pathGraph.waypoints.find(w=>dist(w.lat,w.lng,lat,lng)<15&&w.floor===filterFloor);
+  if(dup){toast(`Duplicate! #${dup.id} is within 15m`,4000);return;}
+  const id=nextWpId++;
+  data.pathGraph.waypoints.push({id,lat,lng,floor:filterFloor});
+  toast(`Waypoint #${id} placed on ${filterFloor===0?'Ground':`Floor ${filterFloor}`}`);
+  addingMode=false;
+  document.getElementById('btnAdd').classList.remove('active');
+  document.getElementById('fabLabel').textContent='Add waypoint';
+  renderAll();
+  selectWaypoint(id);
+});
+
+// ---- Connect ----
+function startConnect(id){
+  connectFrom=id;
+  showPanel('panelConnect');
+  document.getElementById('connStatus').textContent=`Selected #${id}. Now tap the destination waypoint on the map.`;
+  markersLayer.eachLayer(m=>{
+    if(m._wpId===id)m.setStyle({radius:12,color:'#ffa726',weight:3});
+  });
+}
+
+map.on('click',e=>{
+  if(connectFrom===null)return;
+  // Find nearest waypoint within 20px
+  const p=e.latlng;
+  let closest=null,minD=Infinity;
+  markersLayer.eachLayer(m=>{
+    if(!m._wpId)return;
+    const mp=m.getLatLng();
+    const d=dist(p.lat,p.lng,mp.lat,mp.lng);
+    if(d<minD){minD=d;closest=m;}
+  });
+  if(!closest||minD>30){toast('Tap closer to a waypoint');return;}
+  const toId=closest._wpId;
+  if(toId===connectFrom){toast('Same waypoint');return;}
+  const exists=data.pathGraph.edges.some(e=>(e.from===connectFrom&&e.to===toId)||(e.from===toId&&e.to===connectFrom));
+  if(exists){toast('Edge already exists');connectFrom=null;hidePanel('panelConnect');renderAll();return;}
+  const a=data.pathGraph.waypoints.find(w=>w.id===connectFrom);
+  const b=data.pathGraph.waypoints.find(w=>w.id===toId);
+  const weight=Math.round(dist(a.lat,a.lng,b.lat,b.lng));
+  data.pathGraph.edges.push({from:connectFrom,to:toId,weight});
+  toast(`Connected #${connectFrom} ↔ #${toId} (${weight}m)`);
+  connectFrom=null;
+  hidePanel('panelConnect');
+  renderAll();
+  selectedWp=toId;
+  selectWaypoint(toId);
+});
 
 // ---- Verify ----
-function doVerify(fromId, toId) {
-  verifyLayer.clearLayers();
-  const result = astar(fromId, toId);
-  const nodes = {};
-  data.pathGraph.waypoints.forEach(w => nodes[w.id] = w);
+function startVerify(id){
+  verifyFrom=id;
+  showPanel('panelVerify');
+  document.getElementById('verifyStatus').textContent=`Start: #${id}. Now tap DESTINATION on the map.`;
+  document.getElementById('verifyResult').style.display='none';
+  markersLayer.eachLayer(m=>{
+    if(m._wpId===id)m.setStyle({radius:12,color:'#66bb6a',weight:3});
+  });
+}
 
-  if (!result) {
-    document.getElementById('verifyResult').style.display = 'none';
-    document.getElementById('verifyStatus').textContent = 'No path found between these points!';
-    document.getElementById('verifyStatus').style.color = '#d32f2f';
+map.on('click',e=>{
+  if(verifyFrom===null)return;
+  const p=e.latlng;
+  let closest=null,minD=Infinity;
+  markersLayer.eachLayer(m=>{
+    if(!m._wpId)return;
+    const d=dist(p.lat,p.lng,m.getLatLng().lat,m.getLatLng().lng);
+    if(d<minD){minD=d;closest=m;}
+  });
+  if(!closest||minD>30)return;
+  const toId=closest._wpId;
+  if(toId===verifyFrom){toast('Same point');return;}
+
+  verifyLayer.clearLayers();
+  const result=astar(verifyFrom,toId);
+  const nodes={};data.pathGraph.waypoints.forEach(w=>nodes[w.id]=w);
+
+  if(!result){
+    document.getElementById('verifyStatus').textContent='No path found!';
+    document.getElementById('verifyStatus').style.color='#ef5350';
+    document.getElementById('verifyResult').style.display='none';
     return;
   }
 
-  const latlngs = result.path.map(id => [nodes[id].lat, nodes[id].lng]);
-  const turnIds = findTurnIndices(result.path);
+  const ll=result.path.map(id=>[nodes[id].lat,nodes[id].lng]);
+  const turns=findTurns(result.path);
 
-  // Path line
-  L.polyline(latlngs, { color: '#d32f2f', weight: 5, opacity: 0.8 }).addTo(verifyLayer);
-
-  // Turn markers
-  turnIds.forEach(id => {
-    const n = nodes[id];
-    if (!n) return;
-    L.circleMarker([n.lat, n.lng], {
-      radius: 8, color: '#fff', weight: 2, fillColor: '#d32f2f', fillOpacity: 1
-    }).addTo(verifyLayer);
+  L.polyline(ll,{color:'#ef5350',weight:5,opacity:0.8}).addTo(verifyLayer);
+  turns.forEach(id=>{
+    const n=nodes[id];if(!n)return;
+    L.circleMarker([n.lat,n.lng],{radius:8,color:'#fff',weight:2,fillColor:'#ef5350',fillOpacity:1}).addTo(verifyLayer);
   });
+  const s=nodes[result.path[0]],e=nodes[result.path[result.path.length-1]];
+  L.circleMarker([s.lat,s.lng],{radius:10,color:'#fff',weight:3,fillColor:'#66bb6a',fillOpacity:1}).bindTooltip('Start').addTo(verifyLayer);
+  L.circleMarker([e.lat,e.lng],{radius:10,color:'#fff',weight:3,fillColor:'#ef5350',fillOpacity:1}).bindTooltip('Destination').addTo(verifyLayer);
+  map.fitBounds(ll,{padding:[60,60]});
 
-  // Start/end
-  const s = nodes[result.path[0]], e = nodes[result.path[result.path.length - 1]];
-  L.circleMarker([s.lat, s.lng], { radius: 10, color: '#fff', weight: 3, fillColor: '#2e7d32', fillOpacity: 1 })
-    .bindTooltip('Start').addTo(verifyLayer);
-  L.circleMarker([e.lat, e.lng], { radius: 10, color: '#fff', weight: 3, fillColor: '#d32f2f', fillOpacity: 1 })
-    .bindTooltip('Destination').addTo(verifyLayer);
-
-  map.fitBounds(latlngs, { padding: [50, 50] });
-
-  document.getElementById('verifyDist').textContent = result.distance.toFixed(0);
-  document.getElementById('verifySteps').textContent = result.path.length;
-  document.getElementById('verifyResult').style.display = 'block';
-  document.getElementById('verifyStatus').textContent = `Path found! (${result.distance.toFixed(0)}m)`;
-  document.getElementById('verifyStatus').style.color = '#2e7d32';
-}
+  document.getElementById('verifyDist').textContent=result.distance.toFixed(0);
+  document.getElementById('verifySteps').textContent=result.path.length;
+  document.getElementById('verifyResult').style.display='block';
+  document.getElementById('verifyStatus').textContent=`✓ Path: #${verifyFrom} → #${toId}`;
+  document.getElementById('verifyStatus').style.color='#66bb6a';
+});
 
 // ---- Publish ----
-async function doPublish() {
-  data.version = (data.version || 0) + 1;
-  data.updatedAt = new Date().toISOString();
-
-  if (!GITHUB_TOKEN) {
-    GITHUB_TOKEN = prompt('Enter GitHub personal access token:');
-    if (!GITHUB_TOKEN) return showStatus('Publish cancelled', 3000);
-    localStorage.setItem('github_token', GITHUB_TOKEN);
+async function doPublish(){
+  if(!TOKEN){
+    TOKEN=prompt('GitHub token (from https://github.com/settings/tokens):');
+    if(!TOKEN)return;
+    localStorage.setItem('gh_token',TOKEN);
   }
-
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-  const message = `Admin: update campus data v${data.version}`;
-
-  let sha = '';
-  try {
-    const getR = await fetch(`https://api.github.com/repos/${REPO}/contents/${DATA_PATH}`, {
-      headers: { Authorization: `token ${GITHUB_TOKEN}` }
+  data.version=(data.version||0)+1;
+  data.updatedAt=new Date().toISOString();
+  const content=btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
+  let sha='';
+  try{
+    const r=await fetch(`https://api.github.com/repos/${REPO}/contents/${DATA_PATH}`,{headers:{Authorization:`token ${TOKEN}`}});
+    if(r.ok)sha=(await r.json()).sha;
+  }catch(e){}
+  try{
+    const r=await fetch(`https://api.github.com/repos/${REPO}/contents/${DATA_PATH}`,{
+      method:'PUT',
+      headers:{Authorization:`token ${TOKEN}`,'Content-Type':'application/json'},
+      body:JSON.stringify({message:`Admin update v${data.version}`,content,sha:sha||undefined,branch:'main'})
     });
-    if (getR.ok) sha = (await getR.json()).sha;
-  } catch(e) {}
-
-  const body = { message, content, sha: sha || undefined, branch: 'main' };
-
-  try {
-    const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${DATA_PATH}`, {
-      method: 'PUT',
-      headers: { Authorization: `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    if (r.ok) {
-      showStatus(`Published v${data.version}! App will sync within 1-2 min.`, 5000);
-    } else {
-      const err = await r.json();
-      showStatus(`GitHub error: ${err.message}`, 5000);
-      if (err.message && err.message.includes('Bad credentials')) {
-        localStorage.removeItem('github_token');
-        GITHUB_TOKEN = '';
-      }
+    if(r.ok){
+      toast(`Published v${data.version}!`,5000);
+    }else{
+      const err=await r.json();
+      toast(`Error: ${err.message}`,5000);
+      if(err.message&&err.message.includes('Bad credentials')){localStorage.removeItem('gh_token');TOKEN='';}
     }
-  } catch(e) {
-    showStatus(`Network error: ${e.message}`, 5000);
-  }
+  }catch(e){toast(`Network error: ${e.message}`,5000);}
 }
 
-// ---- Map Click (Place Mode) ----
-map.on('click', e => {
-  if (mode !== 'place') return;
-  const { lat, lng } = e.latlng;
+// ---- Panel ----
+function showPanel(id){
+  document.querySelectorAll('.panel').forEach(p=>{p.style.display='none';p.classList.remove('show');});
+  const el=document.getElementById(id);
+  if(el){el.style.display='block';setTimeout(()=>el.classList.add('show'),10);}
+}
+function hidePanel(id){
+  document.getElementById(id).classList.remove('show');
+  setTimeout(()=>document.getElementById(id).style.display='none',300);
+}
 
-  // Duplicate check
-  const dup = data.pathGraph.waypoints.find(w =>
-    haversine(w.lat, w.lng, lat, lng) < 15 && w.floor === placeFloor
+// ---- Event Listeners ----
+document.getElementById('btnAdd').addEventListener('click',enterAddMode);
+
+// Floor filter
+document.querySelectorAll('#floorFilter .floor-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('#floorFilter .floor-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    filterFloor=parseInt(b.dataset.f);
+    const labels=['Ground','Floor 1','Floor 2','Floor 3','All'];
+    document.getElementById('panelListFloor').textContent=labels[filterFloor+1]||'All';
+    renderAll();
+  });
+});
+
+// Edit floor
+document.querySelectorAll('#editFloor .floor-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('#editFloor .floor-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+  });
+});
+
+document.getElementById('btnEditSave').addEventListener('click',()=>{
+  const w=data.pathGraph.waypoints.find(w=>w.id===selectedWp);
+  if(!w)return;
+  const lat=parseFloat(document.getElementById('editLat').value);
+  const lng=parseFloat(document.getElementById('editLng').value);
+  const name=document.getElementById('editName').value.trim();
+  const type=document.getElementById('editType').value;
+  const floor=parseInt(document.querySelector('#editFloor .floor-btn.active')?.dataset.f??w.floor);
+  if(!lat||!lng){toast('Invalid coordinates');return;}
+  w.lat=lat;w.lng=lng;w.floor=floor;
+  const poi=data.pois.find(p=>Math.abs(p.lat-w.lat)<5e-5&&Math.abs(p.lng-w.lng)<5e-5);
+  if(poi){poi.name=name||poi.name;poi.type=type;poi.floor=floor;poi.lat=lat;poi.lng=lng;}
+  else if(name&&type!=='junction'){
+    data.pois.push({id:`poi-${selectedWp}`,name,type,buildingId:null,floor,lat,lng,altitude:0,description:''});
+  }
+  toast('Saved');
+  renderAll();
+  hidePanel('panelEdit');
+});
+
+document.getElementById('btnEditCancel').addEventListener('click',()=>{
+  selectedWp=null;
+  renderAll();
+  hidePanel('panelEdit');
+});
+
+document.getElementById('btnDeleteWp').addEventListener('click',()=>{
+  if(selectedWp!==null&&confirm(`Delete waypoint #${selectedWp}?`)){
+    deleteWp(selectedWp);selectedWp=null;hidePanel('panelEdit');
+  }
+});
+
+document.getElementById('btnVerifyPath').addEventListener('click',()=>{
+  if(selectedWp===null)return;
+  hidePanel('panelEdit');
+  setTimeout(()=>startVerify(selectedWp),350);
+});
+
+document.getElementById('btnConnectMode').addEventListener('click',()=>{
+  if(selectedWp===null)return;
+  hidePanel('panelEdit');
+  setTimeout(()=>startConnect(selectedWp),350);
+});
+
+document.getElementById('btnConnCancel').addEventListener('click',()=>{
+  connectFrom=null;hidePanel('panelConnect');renderAll();
+});
+
+document.getElementById('btnVerifyCancel').addEventListener('click',()=>{
+  verifyFrom=null;verifyLayer.clearLayers();hidePanel('panelVerify');renderAll();
+});
+
+document.getElementById('btnLocate').addEventListener('click',()=>{
+  if(!navigator.geolocation){toast('GPS not available');return;}
+  navigator.geolocation.getCurrentPosition(
+    p=>{map.setView([p.coords.latitude,p.coords.longitude],18);
+      L.circleMarker([p.coords.latitude,p.coords.longitude],{radius:8,color:'#4fc3f7',fillColor:'#4fc3f7',fillOpacity:0.3,weight:3}).addTo(verifyLayer).bindTooltip('You').openTooltip();
+      toast(`📍 ${p.coords.latitude.toFixed(5)}, ${p.coords.longitude.toFixed(5)}`);
+    },
+    ()=>toast('GPS failed',3000),
+    {enableHighAccuracy:true}
   );
-  if (dup) {
-    showStatus(`Duplicate! Waypoint #${dup.id} is within 15m`, 4000);
-    return;
-  }
-
-  document.getElementById('wpLat').value = lat.toFixed(6);
-  document.getElementById('wpLng').value = lng.toFixed(6);
-
-  if (tempMarker) map.removeLayer(tempMarker);
-  tempMarker = L.circleMarker([lat, lng], {
-    radius: 8, color: '#1565C0', fillColor: '#1565C0', fillOpacity: 0.5, weight: 3
-  }).addTo(map);
 });
 
-document.getElementById('btnSaveWp').addEventListener('click', () => {
-  const lat = parseFloat(document.getElementById('wpLat').value);
-  const lng = parseFloat(document.getElementById('wpLng').value);
-  const name = document.getElementById('wpName').value.trim();
-  const type = document.getElementById('wpType').value;
-
-  if (!lat || !lng) return showStatus('Tap on the map first', 3000);
-
-  const id = wpIdCounter++;
-  data.pathGraph.waypoints.push({ id, lat, lng, floor: placeFloor });
-
-  if (name && type !== 'junction') {
-    const poiId = `wp-poi-${id}`;
-    data.pois.push({
-      id: poiId, name, type, buildingId: null, floor: placeFloor,
-      lat, lng, altitude: 0, description: ''
-    });
-  }
-
-  if (tempMarker) { map.removeLayer(tempMarker); tempMarker = null; }
-  document.getElementById('wpName').value = '';
-  document.getElementById('wpLat').value = '';
-  document.getElementById('wpLng').value = '';
-  showStatus(`Waypoint #${id} placed on floor ${placeFloor}`);
-  render();
+document.getElementById('btnSave').addEventListener('click',()=>{
+  const b=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='data.json';a.click();
+  toast('Downloaded data.json');
 });
 
-// ---- Mode Switching ----
-document.querySelectorAll('#toolbar [data-mode]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const m = btn.dataset.mode;
-    if (m === 'publish') {
-      doPublish();
-      return;
-    }
-    document.querySelectorAll('#toolbar [data-mode]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    setMode(m);
+document.getElementById('btnPublish').addEventListener('click',doPublish);
+
+// Panel handle drag to dismiss
+document.querySelectorAll('.panel .handle').forEach(h=>{
+  h.addEventListener('click',()=>{
+    const p=h.closest('.panel');
+    if(p.id==='panelList'){p.classList.toggle('show');setTimeout(()=>{if(!p.classList.contains('show'))p.style.display='none'},300);}
+    else hidePanel(p.id);
   });
 });
-
-function setMode(m) {
-  mode = m;
-  connectFirst = null;
-  verifyFirst = null;
-  verifyLayer.clearLayers();
-  document.getElementById('verifyResult').style.display = 'none';
-
-  document.querySelectorAll('[id^=panel]').forEach(p => p.style.display = 'none');
-  if (m === 'place') document.getElementById('panelPlace').style.display = 'block';
-  else if (m === 'connect') document.getElementById('panelConnect').style.display = 'block';
-  else if (m === 'verify') document.getElementById('panelVerify').style.display = 'block';
-  else document.getElementById('panelView').style.display = 'block';
-
-  if (tempMarker) { map.removeLayer(tempMarker); tempMarker = null; }
-  if (m === 'place') {
-    map.getContainer().style.cursor = 'crosshair';
-  } else {
-    map.getContainer().style.cursor = '';
-  }
-  if (m !== 'verify') verifyLayer.clearLayers();
-  isPanelCollapsed = false;
-  document.getElementById('panel').classList.remove('collapsed');
-}
-
-// ---- Floor Selectors ----
-document.querySelectorAll('#placeFloor button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('#placeFloor button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    placeFloor = parseInt(btn.dataset.floor);
-  });
-});
-
-document.querySelectorAll('#viewFloor button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('#viewFloor button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    selectedFloor = parseInt(btn.dataset.floor);
-    render();
-  });
-});
-
-document.querySelectorAll('#editFloor button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('#editFloor button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  });
-});
-
-// ---- Panel Handle ----
-document.getElementById('panelHandle').addEventListener('click', () => {
-  isPanelCollapsed = !isPanelCollapsed;
-  document.getElementById('panel').classList.toggle('collapsed', isPanelCollapsed);
-});
-
-// ---- Edit Panel ----
-document.getElementById('btnSaveEdit').addEventListener('click', () => {
-  const w = data.pathGraph.waypoints.find(w => w.id === editingWp);
-  if (!w) return;
-  const lat = parseFloat(document.getElementById('editLat').value);
-  const lng = parseFloat(document.getElementById('editLng').value);
-  const name = document.getElementById('editName').value.trim();
-  const type = document.getElementById('editType').value;
-  const floor = parseInt(document.querySelector('#editFloor button.active')?.dataset.floor ?? w.floor);
-  w.lat = lat; w.lng = lng; w.floor = floor;
-
-  const poi = data.pois.find(p => Math.abs(p.lat - w.lat) < 0.00005 && Math.abs(p.lng - w.lng) < 0.00005);
-  if (poi) { poi.name = name || poi.name; poi.type = type; poi.floor = floor; poi.lat = lat; poi.lng = lng; }
-  else if (name && type !== 'junction') {
-    data.pois.push({ id: `wp-poi-${editingWp}`, name, type, buildingId: null, floor, lat, lng, altitude: 0, description: '' });
-  }
-  showStatus('Saved');
-  render();
-  switchPanel('view');
-});
-
-document.getElementById('btnDeleteWp').addEventListener('click', () => {
-  if (confirm(`Delete waypoint #${editingWp}?`)) {
-    deleteWp(editingWp);
-    switchPanel('view');
-  }
-});
-
-document.getElementById('btnCancelEdit').addEventListener('click', () => switchPanel('view'));
-
-// ---- Connect Panel ----
-document.getElementById('btnCancelConn').addEventListener('click', () => {
-  connectFirst = null;
-  document.getElementById('connStatus').textContent = 'Tap the first waypoint';
-  document.getElementById('connStatus').style.color = '';
-  setMode('view');
-});
-
-// ---- Verify Panel ----
-document.getElementById('btnCancelVerify').addEventListener('click', () => {
-  verifyFirst = null;
-  document.getElementById('verifyStatus').textContent = 'Tap START waypoint';
-  document.getElementById('verifyStatus').style.color = '';
-  document.getElementById('verifyResult').style.display = 'none';
-  verifyLayer.clearLayers();
-  setMode('view');
-});
-
-// ---- Locate Me ----
-document.getElementById('btnLocateMe').addEventListener('click', () => {
-  if (!navigator.geolocation) return showStatus('Geolocation not available', 3000);
-  showStatus('Getting location...');
-  navigator.geolocation.getCurrentPosition(pos => {
-    const { latitude: lat, longitude: lng } = pos.coords;
-    map.setView([lat, lng], 18);
-    if (gpsMarker) map.removeLayer(gpsMarker);
-    gpsMarker = L.circleMarker([lat, lng], {
-      radius: 10, color: '#1565C0', fillColor: '#1565C0', fillOpacity: 0.3, weight: 3
-    }).bindTooltip('You are here').addTo(map);
-    showStatus(`📍 ${lat.toFixed(6)}, ${lng.toFixed(6)}`);
-  }, () => showStatus('GPS error', 3000), { enableHighAccuracy: true });
-});
-
-// ---- Download JSON ----
-document.getElementById('btnDownloadJson').addEventListener('click', () => {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'data.json';
-  a.click();
-  showStatus('Downloaded data.json');
-});
-
-function switchPanel(id) {
-  document.querySelectorAll('[id^=panel]').forEach(p => p.style.display = 'none');
-  document.getElementById(id).style.display = 'block';
-}
 
 // ---- Init ----
 loadData();
