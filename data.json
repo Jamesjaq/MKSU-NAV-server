@@ -1,0 +1,237 @@
+{
+  "version": 1,
+  "updatedAt": "2026-07-20T00:00:00Z",
+  "campus": {
+    "name": "Machakos University",
+    "shortName": "MKSU",
+    "centerLat": -1.5167,
+    "centerLng": 37.2673
+  },
+  "buildings": [
+    {
+      "id": "administration",
+      "name": "Administration Block",
+      "abbreviation": "Admin",
+      "lat": -1.5171,
+      "lng": 37.2671,
+      "floors": 3,
+      "outline": [
+        {"lat": -1.5169, "lng": 37.2669},
+        {"lat": -1.5169, "lng": 37.2673},
+        {"lat": -1.5173, "lng": 37.2673},
+        {"lat": -1.5173, "lng": 37.2669}
+      ]
+    },
+    {
+      "id": "engineering",
+      "name": "School of Engineering & Technology",
+      "abbreviation": "Engineering",
+      "lat": -1.5158,
+      "lng": 37.2678,
+      "floors": 4,
+      "outline": [
+        {"lat": -1.5156, "lng": 37.2676},
+        {"lat": -1.5156, "lng": 37.2680},
+        {"lat": -1.5160, "lng": 37.2680},
+        {"lat": -1.5160, "lng": 37.2676}
+      ]
+    },
+    {
+      "id": "education",
+      "name": "School of Education",
+      "abbreviation": "Education",
+      "lat": -1.5163,
+      "lng": 37.2667,
+      "floors": 3,
+      "outline": [
+        {"lat": -1.5161, "lng": 37.2665},
+        {"lat": -1.5161, "lng": 37.2669},
+        {"lat": -1.5165, "lng": 37.2669},
+        {"lat": -1.5165, "lng": 37.2665}
+      ]
+    },
+    {
+      "id": "business",
+      "name": "School of Business & Economics",
+      "abbreviation": "Business",
+      "lat": -1.5172,
+      "lng": 37.2680,
+      "floors": 3,
+      "outline": [
+        {"lat": -1.5170, "lng": 37.2678},
+        {"lat": -1.5170, "lng": 37.2682},
+        {"lat": -1.5174, "lng": 37.2682},
+        {"lat": -1.5174, "lng": 37.2678}
+      ]
+    },
+    {
+      "id": "library",
+      "name": "JKU Library",
+      "abbreviation": "Library",
+      "lat": -1.5165,
+      "lng": 37.2673,
+      "floors": 2,
+      "outline": [
+        {"lat": -1.5163, "lng": 37.2671},
+        {"lat": -1.5163, "lng": 37.2675},
+        {"lat": -1.5167, "lng": 37.2675},
+        {"lat": -1.5167, "lng": 37.2671}
+      ]
+    },
+    {
+      "id": "student-center",
+      "name": "Student Center",
+      "abbreviation": "Student Ctr",
+      "lat": -1.5160,
+      "lng": 37.2672,
+      "floors": 1,
+      "outline": [
+        {"lat": -1.5159, "lng": 37.2671},
+        {"lat": -1.5159, "lng": 37.2674},
+        {"lat": -1.5162, "lng": 37.2674},
+        {"lat": -1.5162, "lng": 37.2671}
+      ]
+    },
+    {
+      "id": "cafeteria",
+      "name": "Main Cafeteria",
+      "abbreviation": "Cafeteria",
+      "lat": -1.5158,
+      "lng": 37.2669,
+      "floors": 1,
+      "outline": [
+        {"lat": -1.5157, "lng": 37.2668},
+        {"lat": -1.5157, "lng": 37.2671},
+        {"lat": -1.5160, "lng": 37.2671},
+        {"lat": -1.5160, "lng": 37.2668}
+      ]
+    },
+    {
+      "id": "hostel-a",
+      "name": "Hostel A",
+      "abbreviation": "Hostel A",
+      "lat": -1.5175,
+      "lng": 37.2668,
+      "floors": 3,
+      "outline": [
+        {"lat": -1.5174, "lng": 37.2666},
+        {"lat": -1.5174, "lng": 37.2670},
+        {"lat": -1.5177, "lng": 37.2670},
+        {"lat": -1.5177, "lng": 37.2666}
+      ]
+    },
+    {
+      "id": "hostel-b",
+      "name": "Hostel B",
+      "abbreviation": "Hostel B",
+      "lat": -1.5175,
+      "lng": 37.2675,
+      "floors": 3,
+      "outline": [
+        {"lat": -1.5174, "lng": 37.2673},
+        {"lat": -1.5174, "lng": 37.2677},
+        {"lat": -1.5177, "lng": 37.2677},
+        {"lat": -1.5177, "lng": 37.2673}
+      ]
+    },
+    {
+      "id": "sports",
+      "name": "Sports Complex",
+      "abbreviation": "Sports",
+      "lat": -1.5153,
+      "lng": 37.2670,
+      "floors": 1,
+      "outline": [
+        {"lat": -1.5151, "lng": 37.2668},
+        {"lat": -1.5151, "lng": 37.2672},
+        {"lat": -1.5155, "lng": 37.2672},
+        {"lat": -1.5155, "lng": 37.2668}
+      ]
+    }
+  ],
+  "pois": [
+    {"id": "admin-registry", "name": "Registry Office", "type": "office", "buildingId": "administration", "floor": 0, "lat": -1.5170, "lng": 37.2670, "altitude": 0, "description": "Student registration and records"},
+    {"id": "admin-vc", "name": "Vice Chancellor's Office", "type": "office", "buildingId": "administration", "floor": 2, "lat": -1.5171, "lng": 37.2671, "altitude": 0, "description": "Office of the Vice Chancellor"},
+    {"id": "admin-finance", "name": "Finance Office", "type": "office", "buildingId": "administration", "floor": 1, "lat": -1.5172, "lng": 37.2670, "altitude": 0, "description": "Fee payment and finance inquiries"},
+    {"id": "eng-lecture-1", "name": "Engineering Lecture Hall 1", "type": "classroom", "buildingId": "engineering", "floor": 0, "lat": -1.5158, "lng": 37.2678, "altitude": 0, "description": "Capacity: 150 students"},
+    {"id": "eng-lab-cs", "name": "Computer Science Lab", "type": "lab", "buildingId": "engineering", "floor": 1, "lat": -1.5157, "lng": 37.2679, "altitude": 0, "description": "Computer programming lab"},
+    {"id": "eng-lab-eng", "name": "Engineering Workshop", "type": "lab", "buildingId": "engineering", "floor": 0, "lat": -1.5159, "lng": 37.2677, "altitude": 0, "description": "Mechanical & electrical workshop"},
+    {"id": "eng-dean", "name": "Dean's Office - Engineering", "type": "office", "buildingId": "engineering", "floor": 2, "lat": -1.5158, "lng": 37.2678, "altitude": 0, "description": "School of Engineering Dean"},
+    {"id": "edu-lecture-1", "name": "Education Lecture Hall", "type": "classroom", "buildingId": "education", "floor": 0, "lat": -1.5163, "lng": 37.2667, "altitude": 0, "description": "Capacity: 200 students"},
+    {"id": "edu-dean", "name": "Dean's Office - Education", "type": "office", "buildingId": "education", "floor": 2, "lat": -1.5164, "lng": 37.2666, "altitude": 0, "description": "School of Education Dean"},
+    {"id": "biz-lecture-1", "name": "Business Lecture Hall", "type": "classroom", "buildingId": "business", "floor": 0, "lat": -1.5172, "lng": 37.2680, "altitude": 0, "description": "Capacity: 180 students"},
+    {"id": "biz-dean", "name": "Dean's Office - Business", "type": "office", "buildingId": "business", "floor": 2, "lat": -1.5173, "lng": 37.2681, "altitude": 0, "description": "School of Business Dean"},
+    {"id": "lib-reading", "name": "Main Reading Room", "type": "library", "buildingId": "library", "floor": 0, "lat": -1.5165, "lng": 37.2673, "altitude": 0, "description": "Silent study area"},
+    {"id": "lib-computers", "name": "E-Resource Centre", "type": "library", "buildingId": "library", "floor": 1, "lat": -1.5165, "lng": 37.2674, "altitude": 0, "description": "Computer access & digital resources"},
+    {"id": "lib-archives", "name": "Archives & Special Collections", "type": "library", "buildingId": "library", "floor": 0, "lat": -1.5166, "lng": 37.2672, "altitude": 0, "description": "Historical documents & thesis collection"},
+    {"id": "sc-guidance", "name": "Guidance & Counseling", "type": "service", "buildingId": "student-center", "floor": 0, "lat": -1.5160, "lng": 37.2672, "altitude": 0, "description": "Student counseling services"},
+    {"id": "sc-activities", "name": "Student Activities Office", "type": "service", "buildingId": "student-center", "floor": 0, "lat": -1.5161, "lng": 37.2673, "altitude": 0, "description": "Clubs & societies registration"},
+    {"id": "cafe-main", "name": "Main Cafeteria", "type": "cafeteria", "buildingId": "cafeteria", "floor": 0, "lat": -1.5159, "lng": 37.2669, "altitude": 0, "description": "Hot meals, snacks & beverages"},
+    {"id": "cafe-snacks", "name": "Snack Bar", "type": "cafeteria", "buildingId": "cafeteria", "floor": 0, "lat": -1.5158, "lng": 37.2670, "altitude": 0, "description": "Quick bites & drinks"},
+    {"id": "hostel-a-reception", "name": "Hostel A Reception", "type": "service", "buildingId": "hostel-a", "floor": 0, "lat": -1.5175, "lng": 37.2668, "altitude": 0, "description": "Hostel A check-in & inquiries"},
+    {"id": "hostel-b-reception", "name": "Hostel B Reception", "type": "service", "buildingId": "hostel-b", "floor": 0, "lat": -1.5175, "lng": 37.2675, "altitude": 0, "description": "Hostel B check-in & inquiries"},
+    {"id": "sports-field", "name": "Sports Field", "type": "service", "buildingId": "sports", "floor": 0, "lat": -1.5153, "lng": 37.2670, "altitude": 0, "description": "Football pitch & athletics track"},
+    {"id": "sports-gym", "name": "Gymnasium", "type": "service", "buildingId": "sports", "floor": 0, "lat": -1.5154, "lng": 37.2669, "altitude": 0, "description": "Indoor sports facility"},
+    {"id": "main-gate", "name": "Main Gate", "type": "entrance", "buildingId": null, "floor": 0, "lat": -1.5176, "lng": 37.2671, "altitude": 0, "description": "Main university entrance"},
+    {"id": "back-gate", "name": "Back Gate", "type": "entrance", "buildingId": null, "floor": 0, "lat": -1.5152, "lng": 37.2675, "altitude": 0, "description": "Rear entrance near sports complex"}
+  ],
+  "qrMarkers": [
+    {"id": "qr-main-gate", "lat": -1.5176, "lng": 37.2671, "altitude": 0, "floor": 0, "heading": 0, "data": "mksu:main-gate:0:entrance", "buildingId": null},
+    {"id": "qr-admin-entrance", "lat": -1.5171, "lng": 37.2671, "altitude": 0, "floor": 0, "heading": 180, "data": "mksu:admin:0:entrance", "buildingId": "administration"},
+    {"id": "qr-eng-entrance", "lat": -1.5158, "lng": 37.2678, "altitude": 0, "floor": 0, "heading": 270, "data": "mksu:eng:0:entrance", "buildingId": "engineering"},
+    {"id": "qr-edu-entrance", "lat": -1.5163, "lng": 37.2667, "altitude": 0, "floor": 0, "heading": 90, "data": "mksu:edu:0:entrance", "buildingId": "education"},
+    {"id": "qr-biz-entrance", "lat": -1.5172, "lng": 37.2680, "altitude": 0, "floor": 0, "heading": 0, "data": "mksu:biz:0:entrance", "buildingId": "business"},
+    {"id": "qr-lib-entrance", "lat": -1.5165, "lng": 37.2673, "altitude": 0, "floor": 0, "heading": 270, "data": "mksu:lib:0:entrance", "buildingId": "library"},
+    {"id": "qr-student-center", "lat": -1.5160, "lng": 37.2672, "altitude": 0, "floor": 0, "heading": 180, "data": "mksu:sc:0:entrance", "buildingId": "student-center"},
+    {"id": "qr-cafeteria", "lat": -1.5158, "lng": 37.2669, "altitude": 0, "floor": 0, "heading": 0, "data": "mksu:cafe:0:entrance", "buildingId": "cafeteria"},
+    {"id": "qr-admin-registry", "lat": -1.5170, "lng": 37.2670, "altitude": 0, "floor": 0, "heading": 45, "data": "mksu:admin:0:registry", "buildingId": "administration"},
+    {"id": "qr-eng-floor1", "lat": -1.5158, "lng": 37.2678, "altitude": 0, "floor": 1, "heading": 90, "data": "mksu:eng:1:staircase", "buildingId": "engineering"}
+  ],
+  "pathGraph": {
+    "waypoints": [
+      {"id": 0, "lat": -1.5176, "lng": 37.2671, "floor": 0},
+      {"id": 1, "lat": -1.5173, "lng": 37.2671, "floor": 0},
+      {"id": 2, "lat": -1.5171, "lng": 37.2671, "floor": 0},
+      {"id": 3, "lat": -1.5168, "lng": 37.2671, "floor": 0},
+      {"id": 4, "lat": -1.5165, "lng": 37.2671, "floor": 0},
+      {"id": 5, "lat": -1.5162, "lng": 37.2671, "floor": 0},
+      {"id": 6, "lat": -1.5159, "lng": 37.2671, "floor": 0},
+      {"id": 7, "lat": -1.5156, "lng": 37.2671, "floor": 0},
+      {"id": 8, "lat": -1.5156, "lng": 37.2678, "floor": 0},
+      {"id": 9, "lat": -1.5162, "lng": 37.2678, "floor": 0},
+      {"id": 10, "lat": -1.5162, "lng": 37.2667, "floor": 0},
+      {"id": 11, "lat": -1.5158, "lng": 37.2669, "floor": 0},
+      {"id": 12, "lat": -1.5172, "lng": 37.2680, "floor": 0},
+      {"id": 13, "lat": -1.5173, "lng": 37.2675, "floor": 0},
+      {"id": 14, "lat": -1.5175, "lng": 37.2675, "floor": 0},
+      {"id": 15, "lat": -1.5175, "lng": 37.2668, "floor": 0},
+      {"id": 16, "lat": -1.5173, "lng": 37.2668, "floor": 0},
+      {"id": 17, "lat": -1.5165, "lng": 37.2673, "floor": 0},
+      {"id": 18, "lat": -1.5160, "lng": 37.2672, "floor": 0},
+      {"id": 19, "lat": -1.5153, "lng": 37.2670, "floor": 0}
+    ],
+    "edges": [
+      {"from": 0, "to": 1, "weight": 30},
+      {"from": 1, "to": 2, "weight": 20},
+      {"from": 2, "to": 3, "weight": 30},
+      {"from": 3, "to": 4, "weight": 30},
+      {"from": 4, "to": 5, "weight": 30},
+      {"from": 5, "to": 6, "weight": 30},
+      {"from": 6, "to": 7, "weight": 30},
+      {"from": 7, "to": 19, "weight": 35},
+      {"from": 7, "to": 8, "weight": 70},
+      {"from": 8, "to": 9, "weight": 60},
+      {"from": 9, "to": 5, "weight": 70},
+      {"from": 5, "to": 11, "weight": 30},
+      {"from": 5, "to": 10, "weight": 45},
+      {"from": 4, "to": 17, "weight": 20},
+      {"from": 3, "to": 18, "weight": 40},
+      {"from": 2, "to": 12, "weight": 90},
+      {"from": 1, "to": 13, "weight": 40},
+      {"from": 1, "to": 16, "weight": 30},
+      {"from": 13, "to": 14, "weight": 20},
+      {"from": 16, "to": 15, "weight": 20},
+      {"from": 10, "to": 11, "weight": 35}
+    ]
+  }
+}
