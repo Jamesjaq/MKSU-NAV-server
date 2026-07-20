@@ -116,7 +116,7 @@ function toast(msg, dur) {
 // -- Load data --
 async function load() {
   try {
-    var r = await fetch('https://raw.githubusercontent.com/' + REPO + '/main/' + DATA_PATH + '?_=' + Date.now());
+    var r = await fetch('../data.json?_=' + Date.now());
     data = await r.json();
   } catch(e) {
     data = null;
@@ -124,7 +124,7 @@ async function load() {
   if (!data) {
     data = {
       version: 1, updatedAt: new Date().toISOString(),
-      campus: { name: 'Machakos University', shortName: 'MKSU', centerLat: -1.5167, centerLng: 37.2673 },
+      campus: { name: 'Machakos University', shortName: 'MKSU', centerLat: -1.5317, centerLng: 37.2625 },
       buildings: [], pois: [], qrMarkers: [],
       pathGraph: { waypoints: [], edges: [] }
     };
